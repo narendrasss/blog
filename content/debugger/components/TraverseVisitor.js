@@ -2,11 +2,13 @@ import React from 'react'
 import tw, { styled, theme } from 'twin.macro'
 import { BsPlayFill, BsPauseFill } from 'react-icons/bs'
 
-import { Tree, useSyntaxTree } from '../sandboxes/AstSandbox'
-import exec from '../../lib/exec'
-import usePlayer from '../../lib/usePlayer'
-import snapshot from '../../lib/snapshot.macro'
-import Button from '../elements/Button'
+import exec from '@/lib/exec'
+import usePlayer from '@/lib/usePlayer'
+import Button from '@/elements/Button'
+import snapshot from '../../../lib/snapshot.macro'
+
+import Tree from './shared/Tree'
+import useSyntaxTree from './shared/useSyntaxTree'
 
 const code = `let a = 10`
 

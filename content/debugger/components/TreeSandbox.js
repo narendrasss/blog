@@ -1,11 +1,13 @@
 import React from 'react'
 import tw, { styled } from 'twin.macro'
 
-import LiveEditor from '../shared/LiveEditor'
-import { Tree, useSyntaxTree } from '../sandboxes/AstSandbox'
-import Widget from '../Widget'
+import LiveEditor from '@/components/mdx/LiveEditor'
+import Widget from '@/components/mdx/Widget'
 
-export default function EmbeddedSandbox({
+import Tree from './shared/Tree'
+import useSyntaxTree from './shared/useSyntaxTree'
+
+export default function TreeSandbox({
   initialCode = '',
   depth = 0,
   showProps = false,

@@ -1,18 +1,19 @@
 import tw, { styled } from 'twin.macro'
 
-function Aside({ title, children, className }) {
+function ProblemStatement({ children, className }) {
   return (
     <aside className={className}>
-      <Title>{title}</Title>
+      <Title>The Problem</Title>
       <Content>{children}</Content>
     </aside>
   )
 }
 
 /**
- * We have to wrap Aside in `styled` here so we can target it in a parent selector.
+ * We have to wrap ProblemStatement in `styled` here so we can target it in a
+ * parent selector.
  */
-export default styled(Aside)``
+export default styled(ProblemStatement)``
 
 const Title = styled.h1`
   ${tw`font-mono bg-gray-800 shadow-md`};

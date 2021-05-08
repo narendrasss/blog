@@ -3,7 +3,7 @@ import { FaChevronDown, FaChevronUp, FaQuestion } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 import tw, { styled } from 'twin.macro'
 
-import Widget from './Widget'
+import Widget from '../components/Widget'
 
 export default function Callout({ label, children }) {
   return (

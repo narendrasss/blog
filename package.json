@@ -19,7 +19,7 @@
     "faunadb": "^4.0.3",
     "framer-motion": "^3.1.1",
     "next": "10.0.6",
-    "next-mdx-enhanced": "^5.0.0",
+    "next-mdx-remote": "^3.0.1",
     "postcss": "^8.2.2",
     "prism-react-renderer": "^1.2.0",
     "prismjs": "^1.23.0",

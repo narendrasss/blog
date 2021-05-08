@@ -1,10 +1,11 @@
 import React from 'react'
-import { styled } from 'twin.macro'
+import 'twin.macro'
 
-import TranspilerSandbox from './TranspilerSandbox'
-import LiveEditor from '../shared/LiveEditor'
-import Widget from '../Widget'
-import useBabelPlugin from './useBabelPlugin'
+import LiveEditor from '@/components/mdx/LiveEditor'
+import Widget from '@/components/mdx/Widget'
+
+import TranspilerSandbox from './shared/TranspilerSandbox'
+import useBabelPlugin from './shared/useBabelPlugin'
 
 /**
  * The VisitorSandbox component allows users to create their own Babel visitors and
@@ -19,7 +20,7 @@ export default function VisitorSandbox({ children, visitor, initialCode }) {
   const [plugin, error] = useBabelPlugin(pluginCode, exportDefaultToReturn)
 
   return (
-    <SandboxWrapper className="full-width">
+    <Widget className="full-width">
       <div tw="mb-4">
         <LiveEditor value={pluginCode} onValueChange={setPluginCode} />
         {error && <pre>{error}</pre>}
@@ -30,7 +31,7 @@ export default function VisitorSandbox({ children, visitor, initialCode }) {
           {children}
         </Widget.Caption>
       )}
-    </SandboxWrapper>
+    </Widget>
   )
 }
 
@@ -47,5 +48,3 @@ function exportDefaultToReturn({ types: t }) {
     },
   }
 }
-
-const SandboxWrapper = styled(Widget)``

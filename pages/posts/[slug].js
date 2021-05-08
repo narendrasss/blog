@@ -2,6 +2,11 @@ import React from 'react'
 import Head from 'next/head'
 import tw, { styled, theme } from 'twin.macro'
 import { MDXProvider } from '@mdx-js/react'
+import { MDXRemote } from 'next-mdx-remote'
+
+import * as fs from 'fs/promises'
+import * as path from 'path'
+import { serialize } from 'next-mdx-remote/serialize'
 
 import FeedbackForm from '@/components/FeedbackForm'
 import NewsletterForm from '@/components/NewsletterForm'
@@ -11,7 +16,16 @@ import CodeBlock from '@/elements/CodeBlock'
 import ThematicBreak from '@/elements/ThematicBreak'
 import ExternalLink from '@/elements/ExternalLink'
 
-export default function Layout({ frontMatter = {}, children }) {
+import MDXComponents from '@/components/mdx'
+import postComponents from '@/content/debugger/components'
+
+const components = {
+  ...MDXComponents,
+  ...postComponents,
+}
+
+export default function Layout({ frontMatter = {}, content }) {
+  console.log(content)
   return (
     <MDXProvider
       components={{ a: ExternalLink, pre: CodeBlock, hr: ThematicBreak }}
@@ -43,7 +57,7 @@ export default function Layout({ frontMatter = {}, children }) {
             }).format(new Date(frontMatter.publishDate || new Date()))}
           </p>
         </div>
-        {children}
+        <MDXRemote {...content} components={components} />
         <FormContainer>
           <FeedbackForm slug={frontMatter.__resourcePath} />
           <NewsletterForm />
@@ -58,6 +72,32 @@ export default function Layout({ frontMatter = {}, children }) {
     </MDXProvider>
   )
 }
+
+export async function getStaticProps({ params }) {
+  const contentSource = await fs.readFile(
+    path.join(process.cwd(), 'content', params.slug, 'index.mdx')
+  )
+  return {
+    props: {
+      content: await serialize(contentSource.toString('utf-8')),
+    },
+  }
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [
+      {
+        params: {
+          slug: 'debugger',
+        },
+      },
+    ],
+    fallback: false,
+  }
+}
+
+// -- Styles --
 
 const Header = styled.header`
   ${tw`mb-12! bg-gradient-to-b from-gray-200 to-gray-100 lg:h-screen lg:mb-24! dark:(text-white from-blacks-900 to-blacks-700)`}
