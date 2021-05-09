@@ -25,7 +25,6 @@ const components = {
 }
 
 export default function Layout({ frontMatter = {}, content }) {
-  console.log(content)
   return (
     <MDXProvider
       components={{ a: ExternalLink, pre: CodeBlock, hr: ThematicBreak }}
