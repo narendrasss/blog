@@ -1,10 +1,12 @@
 import Highlight, { defaultProps } from 'prism-react-renderer'
+import { AnimateSharedLayout, motion } from 'framer-motion'
 import { styled } from 'twin.macro'
 
 function CodeBlock({
   children = '',
   highlight = '',
   style = {},
+  showLineNumbers = false,
   className: containerClass,
 }) {
   const lineNumbers = getLineNumbers(highlight)
@@ -17,31 +19,34 @@ function CodeBlock({
             tw="rounded-md overflow-x-auto text-sm"
             style={style}
           >
-            {tokens.map((line, i) => (
-              <Line
-                key={i}
-                style={{ '--bg-opacity': lineNumbers.includes(i) ? 0.1 : 0 }}
-              >
-                {line.map((token, key) => {
-                  const { children, className } = getTokenProps({
-                    token,
-                    key,
-                  })
-                  const [, tokenType] = className.split(' ')
-                  return (
-                    <span
-                      key={key}
-                      style={{
-                        color: `var(--token-color-${tokenType})`,
-                        fontStyle: `var(--token-style-${tokenType})`,
-                      }}
-                    >
-                      {children}
-                    </span>
-                  )
-                })}
-              </Line>
-            ))}
+            <AnimateSharedLayout>
+              {tokens.map((line, i) => (
+                <Line key={i} style={{ '--pl': showLineNumbers && '40px' }}>
+                  {showLineNumbers && <LineNumber>{i + 1}</LineNumber>}
+                  {lineNumbers.includes(i + 1) && (
+                    <Highlighter style={{ scale: 1.05 }} />
+                  )}
+                  {line.map((token, key) => {
+                    const { children, className } = getTokenProps({
+                      token,
+                      key,
+                    })
+                    const [, tokenType] = className.split(' ')
+                    return (
+                      <span
+                        key={key}
+                        style={{
+                          color: `var(--token-color-${tokenType})`,
+                          fontStyle: `var(--token-style-${tokenType})`,
+                        }}
+                      >
+                        {children}
+                      </span>
+                    )
+                  })}
+                </Line>
+              ))}
+            </AnimateSharedLayout>
           </StyledBlock>
         )
       }}
@@ -64,14 +69,17 @@ function getCode(children) {
 }
 
 function getLineNumbers(highlight) {
-  const numbers = highlight.split(',').map(Number)
+  const numbers =
+    typeof highlight === 'number'
+      ? [highlight]
+      : highlight.split(',').map(Number)
   return {
     /**
      * @param {number} lineNumber
      * @returns {boolean} whether the given line number should be highlighted
      */
     includes(lineNumber) {
-      if (!highlight.length) {
+      if (!numbers.length) {
         return false
       }
       return numbers.includes(lineNumber)
@@ -87,5 +95,23 @@ const StyledBlock = styled.pre`
 `
 
 const Line = styled.div`
-  background: hsla(0, 0%, 100%, var(--bg-opacity, 0));
+  position: relative;
+  padding-left: var(--pl, 0px);
+`
+
+const LineNumber = styled.p`
+  font-family: var(--text-mono);
+  color: var(--color-text-secondary);
+  position: absolute;
+  left: 0;
+  top: 0;
+`
+
+const Highlighter = styled(motion.div).attrs({ layoutId: 'highlighter' })`
+  background: hsla(0, 0%, 40%, 0.1);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
 `

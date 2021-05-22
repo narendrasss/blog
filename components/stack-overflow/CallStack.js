@@ -1,38 +1,46 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { styled } from 'twin.macro'
+
+const animationProps = {
+  animate: { y: 0, opacity: 1 },
+  initial: { y: 8, opacity: 0 },
+}
 
 export default function CallStack({ className, stack }) {
   if (!stack.length) {
     return (
-      <Stack>
-        <p>Nothing to see here!</p>
+      <Stack className={className}>
+        <motion.p {...animationProps}>Nothing to see here!</motion.p>
       </Stack>
     )
   }
 
   return (
     <Stack className={className}>
-      {stack.map((frame) => (
-        <li key={frame.name}>
-          <FrameTitle>{frame.name}</FrameTitle>
-          <StackFrame>
-            {frame.localVars.map(([name, value]) => (
-              <StackItem key={name}>
-                {name}: {value}
+      <AnimatePresence>
+        {stack.map((frame) => (
+          <motion.li exit={{ y: 8, opacity: 0 }} key={frame.name}>
+            <FrameTitle>{frame.name}</FrameTitle>
+            <StackFrame>
+              {frame.localVars.map(([name, value]) => (
+                <StackItem key={name}>
+                  {name}: {value}
+                </StackItem>
+              ))}
+              {frame.arguments.map(([name, value]) => (
+                <StackItem key={name} style={{ '--background': 'var(--teal)' }}>
+                  {name}: {value}
+                </StackItem>
+              ))}
+              <StackItem
+                style={{ '--background': 'var(--purple)', color: 'white' }}
+              >
+                Line {frame.returnAddress}
               </StackItem>
-            ))}
-            {frame.arguments.map(([name, value]) => (
-              <StackItem key={name} style={{ '--background': 'var(--teal)' }}>
-                {name}: {value}
-              </StackItem>
-            ))}
-            <StackItem
-              style={{ '--background': 'var(--purple)', color: 'white' }}
-            >
-              Line {frame.returnAddress}
-            </StackItem>
-          </StackFrame>
-        </li>
-      ))}
+            </StackFrame>
+          </motion.li>
+        ))}
+      </AnimatePresence>
     </Stack>
   )
 }
@@ -49,7 +57,7 @@ const Stack = styled.ul`
   gap: 16px;
 `
 
-const FrameTitle = styled.h1`
+const FrameTitle = styled(motion.h1).attrs({ layout: true })`
   color: var(--color-text-secondary);
 `
 
@@ -59,7 +67,10 @@ const StackFrame = styled.ul`
   }
 `
 
-const StackItem = styled.li`
+const StackItem = styled(motion.li).attrs({
+  layout: true,
+  ...animationProps,
+})`
   background: var(--background, var(--white));
   border-radius: 4px;
   padding: 8px;

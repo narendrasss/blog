@@ -6,19 +6,20 @@ import CodeBlock from '@/elements/CodeBlock'
 import CallStack from './CallStack'
 
 const code = `function compute(a, b) {
-    const product = multiply(a, b)
-    return add(product, b)
+  const product = multiply(a, b)
+  return add(product, b)
 }
 
 function multiply(a, b) {
-    return a * b
+  return a * b
 }
 
 function add(a, b) {
-    return a + b
+  return a + b
 }
 
-compute(3, 2)`
+compute(3, 2)
+`
 
 const computeFrame = {
   name: 'compute',
@@ -56,17 +57,20 @@ const addFrame = {
 }
 
 const frames = [
-  [computeFrame],
-  [computeFrame, multiplyFrame],
-  [computeFrameWithVars],
-  [computeFrameWithVars, addFrame],
-  [computeFrameWithVars],
+  [14],
+  [1, computeFrame],
+  [2, computeFrame],
+  [6, computeFrame, multiplyFrame],
+  [2, computeFrameWithVars],
+  [3, computeFrameWithVars],
+  [10, computeFrameWithVars, addFrame],
+  [3, computeFrameWithVars],
   [],
 ]
 
 export default function StackSandbox() {
   const [activeFrameIndex, setActiveFrameIndex] = React.useState(0)
-  const currentStack = frames[activeFrameIndex]
+  const [activeLine, ...currentStack] = frames[activeFrameIndex]
   return (
     <>
       <div>
@@ -79,7 +83,9 @@ export default function StackSandbox() {
         />
       </div>
       <SandboxWrapper>
-        <CodeBlock>{code}</CodeBlock>
+        <CodeBlock highlight={activeLine} showLineNumbers>
+          {code}
+        </CodeBlock>
         <CallStack stack={currentStack} />
       </SandboxWrapper>
     </>
