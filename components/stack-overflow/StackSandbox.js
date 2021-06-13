@@ -95,6 +95,6 @@ export default function StackSandbox() {
 const SandboxWrapper = styled.div`
   display: grid;
   height: 32rem;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 `

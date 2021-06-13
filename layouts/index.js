@@ -1,18 +1,14 @@
 import React from 'react'
 import Head from 'next/head'
 import tw, { styled, theme } from 'twin.macro'
-import { MDXProvider } from '@mdx-js/react'
 
 import FeedbackForm from '@/components/FeedbackForm'
 import NewsletterForm from '@/components/NewsletterForm'
 import Navigation from '@/components/Navigation'
+import ComponentProvider from '@/components/ComponentProvider'
 
 import CodeBlock from '@/elements/CodeBlock'
 import ThematicBreak from '@/elements/ThematicBreak'
-import ExternalLink from '@/elements/ExternalLink'
-import InlineCode from '@/elements/InlineCode'
-import UnorderedList from '@/elements/UnorderedList'
-import OrderedList from '@/elements/OrderedList'
 import Heading from '@/elements/Heading'
 import Subheading from '@/elements/Subheading'
 import ProblemStatement from '@/elements/ProblemStatement'
@@ -25,22 +21,12 @@ const formatter = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 })
 
-const mdxComponents = {
-  a: ExternalLink,
-  pre: CodeBlock,
-  hr: ThematicBreak,
-  inlineCode: InlineCode,
-  ul: UnorderedList,
-  ol: OrderedList,
-  h2: Heading,
-  h3: Subheading,
-}
-
 export default function Layout({ frontMatter = {}, children }) {
   const slug = formatPath(frontMatter.__resourcePath)
   return (
-    <MDXProvider components={mdxComponents}>
+    <ComponentProvider>
       <Article>
+        <Navigation />
         <Head>
           <title>{frontMatter.title}</title>
           <meta name="description" content={frontMatter.description} />
@@ -74,7 +60,7 @@ export default function Layout({ frontMatter = {}, children }) {
       <Footer>
         <Navigation style={{ width: 'min(65ch, 100%)' }} tw="mt-8" />
       </Footer>
-    </MDXProvider>
+    </ComponentProvider>
   )
 }
 
@@ -131,6 +117,10 @@ const Article = styled.article`
   padding-bottom: 80px;
   grid-template-columns: 2rem 1fr 2rem;
   line-height: 1.6;
+
+  --color-background: var(--gray100);
+  background: var(--color-background);
+  color: var(--color-text);
 
   > * {
     grid-column: 2 / span 1;

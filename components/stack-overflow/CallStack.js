@@ -10,6 +10,7 @@ export default function CallStack({ className, stack }) {
   if (!stack.length) {
     return (
       <Stack className={className}>
+        <StackTitle>Call Stack</StackTitle>
         <motion.p {...animationProps}>Nothing to see here!</motion.p>
       </Stack>
     )
@@ -17,6 +18,7 @@ export default function CallStack({ className, stack }) {
 
   return (
     <Stack className={className}>
+      <StackTitle>Call Stack</StackTitle>
       <AnimatePresence>
         {stack.map((frame) => (
           <motion.li exit={{ y: 8, opacity: 0 }} key={frame.name}>
@@ -55,6 +57,14 @@ const Stack = styled.ul`
   font-size: var(--text-sm);
   padding: 16px;
   gap: 16px;
+  position: relative;
+`
+
+const StackTitle = styled.h1`
+  font-size: var(--text-base);
+  position: absolute;
+  top: 16px;
+  left: 16px;
 `
 
 const FrameTitle = styled(motion.h1).attrs({ layout: true })`

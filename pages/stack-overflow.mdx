@@ -4,11 +4,112 @@ blurb: "It's a bit more than a website."
 description: "It's a bit more than a website."
 publishedAt: '2021-06-02'
 editedAt: '2021-06-02'
+layout: 'stack-overflow'
 ---
 
 import StackSandbox from '@/components/stack-overflow/StackSandbox'
+import Placeholder from '@/components/Placeholder'
 import Widget from '@/elements/Widget'
+import Callout from '@/elements/Callout'
+
+It's the holy grail of websites, for one.
+
+But it's also a pretty big security vulnerability, and one you probably won't encounter if you spend all day writing JavaScript (like yours truly!) Nevertheless, I still think it's pretty cool to go a few abstractions down and learn more about what a stack overflow is and how you can abuse it to harm other people's computers (please don't). In the process, you'll hopefully learn more about how computers work.
+
+This article is split into two parts. First, we're going to talk about what the call stack is. Then, we're going to talk about how the stack could "overflow".
+
+Let's get started!
+
+## TLDR
+
+A stack overflow happens when a value in the call stack flows out of its allocated space, potentially overwriting other data in the stack.
+
+Some cool visual here
+
+But what's a call stack? And how can a value "overflow"? What does it mean for a value to be allocated? Let's look at answering these questions one at a time.
+
+## The Call Stack
+
+How does a computer execute the following piece of code?
+
+```js showLineNumbers=true
+function multiply(a, b) {
+  return a * b
+}
+
+const product = multiply(1, 2)
+console.log(product)
+```
+
+As it starts executing line 5, the computer has to go through the following steps:
+
+1. Get the location of the `multiply` function
+2. Set the function arguments to `a = 1` and `b = 2`
+3. Enter the `multiply` function and start running it
+4. Return from `multiply` back to line 5
+
+As it executes the `console.log` call, it has to do the same thing:
+
+1. Get the location of the `console.log` function
+2. Set the function argument to `product`
+3. Enter the log function and start executing it
+4. Return from the log function back to line 6
+
+In any case, the computer has to remember at minimum two things: (1) the arguments to the function and (2) the line of code to return to once it returns from the function (also known as the _return address_).
+
+The _call stack_ provides a place for the computer to store this information so that it never loses track of where it is in a program. Whenever the computer calls a function, it adds that return address to the top of the stack. When it returns from a function, it takes the return address from the top of the stack and jumps back to that location in the code.
 
 <Widget className="full-width-2x">
   <StackSandbox />
 </Widget>
+
+## How Can It Overflow?
+
+A stack overflow happens when variables "spill out" of their assigned space, potentially affecting other, more critical values in the call stack.
+
+...That probably doesn't make too much sense, so let's take a step back.
+
+### How do Variables Work?
+
+Despite what it may seem, your code doesn't have free reign over your computer's memory. The operating system and your hardware work closely to make sure your program only uses the memory that it's assigned (and for good reason, too).
+
+As a result, programs have to be explicit with its memory usage. Whenever you write a variable like `const a = 10`, the computer has to _allocate_ space to store that variable. Only after the memory is allocated is the computer able to store the corresponding value.
+
+<Placeholder name="memory allocation" />
+
+As part of the allocation process, the computer has to declare exactly how many bytes it's going to need _(TODO: cross-check this)_. This means knowing, ahead of time, what size your variable is going to be.
+
+For simpler data types like numbers and booleans, knowing how much space you're going to need is pretty straightforward — it's typically defined as part of the language design. But for more complex types like arrays and strings, you have to consider how large you want your array to be to know how much memory your array is going to use. This is not something we often think about as JavaScript developers, but in lower level languages like C, you have to explicitly declare how many elements your array is going to be:
+
+```c
+int n[10]; // allocate space for 10 integers
+```
+
+From here on out, I'm going to refer to the size we explicitly declare as the "capacity" of the array.
+
+### Size Mismatch
+
+What happens, then, if the size we set doesn't quite match up with our set capacity? If the true length is less than the capacity, then no big deal — we've only wasted a few bytes. But if the true size is _more_ than the initial capacity, we have a big problem. Where should the extra space go?
+
+<Placeholder name="array slider" />
+
+In many cases, trying to write to space that hasn't been allocated will make your program crash. The hardware will catch that you're accessing memory that doesn't belong to you and will send a signal to the operating system that something's up.
+
+When you're dealing with the stack though, this doesn't happen because you're technically still accessing memory that belongs to you. The entire stack belongs to the program, after all. This becomes an issue because that extra space still has to go _somewhere_.
+
+In the stack, variables are set right next to one another. When one variable overflows, that extra space ends up in memory that belongs to other variables. This ends up overwriting the values of other variables. Pretty weird.
+
+## A Stack Overflow Attack
+
+However, "pretty weird" behaviour becomes a security risk when you're overflowing _so much_ that you start overwriting the _metadata_ that's used internally by the computer. Recall that the call stack was initially designed to store the values of return addresses. The computer uses this return address to determine where to jump back to once it's done executing the current function. At the bottom of every stack frame lies this return address — it's possible to overflow so much that you end up overwriting this value.
+
+Because the computer relies so heavily on this return address to execute the program, overwriting it is a big deal. When the computer is finished executing the current function, it jumps back to wherever the return address says it should jump to. When this value is overwritten, it's possible that the computer starts executing code that might not even be a part of your program.
+
+When this is done accidentally, it's a bug that's hard to track down. But when it's done deliberately, you can end up exposing your computer to people who probably shouldn't have access to it. The idea behind the attack is this — send a super long input that would overwrite the return address to the location of your malicious code. When the computer returns, it's going to jump to the location of that code and start executing it. Uh oh.
+
+## Prevention
+
+So how do you prevent it? Thankfully, we don't really have to worry about this anymore because the guards are built into the languages we code in. In a high level program like JavaScript, arrays don't even exist on the stack, so this kind of exploit isn't possible.
+Even C's compiler is smart enough to detect when these overflows can happen and will prevent compilation when it detects an exploit is possible.
+
+Nevertheless, I thought it was interesting to explore deeper into the meaning behind the name of the most trafficked dev website (I made that up — I don't actually know if it is or not, but probably!), and in the process, learn more about memory allocation and how programs work.

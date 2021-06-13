@@ -24,7 +24,7 @@ function CodeBlock({
                 <Line key={i} style={{ '--pl': showLineNumbers && '40px' }}>
                   {showLineNumbers && <LineNumber>{i + 1}</LineNumber>}
                   {lineNumbers.includes(i + 1) && (
-                    <Highlighter style={{ scale: 1.05 }} />
+                    <Highlighter style={{ scaleX: 1.05, scaleY: 1.2 }} />
                   )}
                   {line.map((token, key) => {
                     const { children, className } = getTokenProps({
@@ -38,6 +38,7 @@ function CodeBlock({
                         style={{
                           color: `var(--token-color-${tokenType})`,
                           fontStyle: `var(--token-style-${tokenType})`,
+                          fontWeight: `var(--token-weight-${tokenType})`,
                         }}
                       >
                         {children}
@@ -92,6 +93,7 @@ const StyledBlock = styled.pre`
   border: 2px solid var(--code-border-color, black);
   color: var(--code-text-color);
   padding: var(--space, 24px);
+  font-family: var(--text-mono);
 `
 
 const Line = styled.div`
@@ -100,7 +102,6 @@ const Line = styled.div`
 `
 
 const LineNumber = styled.p`
-  font-family: var(--text-mono);
   color: var(--color-text-secondary);
   position: absolute;
   left: 0;
@@ -108,7 +109,7 @@ const LineNumber = styled.p`
 `
 
 const Highlighter = styled(motion.div).attrs({ layoutId: 'highlighter' })`
-  background: hsla(0, 0%, 40%, 0.1);
+  border: 1px solid white;
   position: absolute;
   height: 100%;
   width: 100%;
