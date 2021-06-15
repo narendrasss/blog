@@ -28,6 +28,9 @@ function CodeBlock({
                     key,
                   })
                   const [, tokenType] = className.split(' ')
+                  if (isAnnotation(tokenType, children)) {
+                    return <Annotation key={key}>{children}</Annotation>
+                  }
                   return (
                     <span
                       key={key}
@@ -50,6 +53,25 @@ function CodeBlock({
 }
 
 export default styled(CodeBlock)``
+
+function Annotation({ children }) {
+  let label = children.replace('/* ', '')
+  label = label.replace(' */', '')
+  return <AnnotationWrapper>{label}</AnnotationWrapper>
+}
+
+function isAnnotation(tokenType, text) {
+  return tokenType === 'comment' && text.startsWith('/*') && text.endsWith('*/')
+}
+
+const AnnotationWrapper = styled.span`
+  background: var(--gray100);
+  font-size: var(--text-sm);
+  padding: 2px;
+  border-radius: 2px;
+`
+
+// --
 
 function getCode(children) {
   if (typeof children === 'string') {
@@ -84,6 +106,7 @@ const StyledBlock = styled.pre`
   border: 2px solid var(--code-border-color, black);
   color: var(--code-text-color);
   padding: var(--space, 24px);
+  font-family: var(--text-mono);
 `
 
 const Line = styled.div`
