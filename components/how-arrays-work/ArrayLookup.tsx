@@ -20,7 +20,9 @@ export default function ArrayLookup({ arr, activeIndex }: ArrayLookupProps) {
   return (
     <FullBleed size="full">
       <RandomIndexButton
-        onClick={() => setCurrentIndex(getRandomInt(0, arr.length - 1))}
+        onClick={() =>
+          setCurrentIndex(getRandomInt(0, arr.length - 1, currentIndex))
+        }
       >
         Index: {currentIndex}
       </RandomIndexButton>
