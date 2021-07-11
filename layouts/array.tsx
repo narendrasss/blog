@@ -37,7 +37,10 @@ type Frontmatter = {
   publishedAt: string
 }
 
-export default function Layout({ frontMatter = {} as Frontmatter, children }) {
+export default function ArrayLayout({
+  frontMatter = {} as Frontmatter,
+  children,
+}) {
   const slug = formatPath(frontMatter.__resourcePath)
   return (
     <MDXProvider components={mdxComponents}>
@@ -55,10 +58,11 @@ export default function Layout({ frontMatter = {} as Frontmatter, children }) {
           <meta property="og:url" content={`https://nan.fyi/${slug}`} />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
-        <Header>
+        <header>
           <Title>{frontMatter.title}</Title>
           <Blurb>{frontMatter.blurb}</Blurb>
-        </Header>
+          <Blurb>{formatter.format(new Date(frontMatter.publishedAt))}</Blurb>
+        </header>
         {children}
       </Article>
     </MDXProvider>
@@ -66,36 +70,53 @@ export default function Layout({ frontMatter = {} as Frontmatter, children }) {
 }
 
 const Title = styled('h1', {
-  fontSize: '4rem',
+  fontFamily: 'var(--text-mono)',
+  fontSize: '3rem',
+  fontWeight: '500',
   lineHeight: '1',
 })
 
 const Blurb = styled('p', {
-  color: 'var(--gray600)',
-})
-
-const Header = styled('header', {
-  marginBottom: '8rem',
-
-  '> :last-child': {
-    marginTop: '2rem',
-  },
+  opacity: 0.7,
+  marginTop: '16px',
 })
 
 const Article = styled('article', {
-  '--text-sans': 'Inter',
-  '--text-serif': 'var(--text-sans)',
+  '--text-sans': 'Karla',
   '--text-mono': 'DM Mono',
 
-  fontFamily: 'var(--text-sans)',
+  '--horizontal-padding': '32px',
 
-  paddingTop: '12rem',
+  '--base-color': '235, 60%',
+  '--dark-blue': 'hsla(235, 80%, 32%)',
+  '--base-blue': 'hsla(var(--base-color), 55%)',
+  '--light-blue': 'hsla(var(--base-color), 90%)',
+
+  '--color-main': 'var(--base-blue)',
+  '--color-light': 'var(--light-blue)',
+  '--color-dark': 'var(--dark-blue)',
+  '--color-highlight-1': 'hsla(327, 41%, 72%, 1)',
+  '--color-highlight-2': 'hsla(168, 50%, 52%, 1)',
+
+  '--inline-code-background': 'var(--color-light)',
+
+  fontFamily: 'var(--text-sans)',
+  color: 'hsla(240, 60%, 25%)',
+  backgroundColor: 'hsla(var(--base-color), 98%)',
+  padding: 'calc(3 * var(--horizontal-padding)) 0',
+
   display: 'grid',
-  gridTemplateColumns: '1fr 60ch 1fr',
+  gridTemplateColumns:
+    '1fr min(60ch, calc(100vw - calc(var(--horizontal-padding) * 2))) 1fr',
+  gridColumnGap: 'var(--horizontal-padding)',
 
   '> *': {
     marginBottom: '1.5rem',
     gridColumn: '2 / span 1',
+  },
+
+  '> header': {
+    marginBottom: '80px',
   },
 
   '> .full-width': {
@@ -103,12 +124,14 @@ const Article = styled('article', {
   },
 
   '> h2': {
+    fontFamily: 'var(--text-mono)',
     fontSize: '2rem',
     marginTop: '3rem',
     marginBottom: '2rem',
   },
 
   '> h3': {
+    fontFamily: 'var(--text-mono)',
     fontSize: '1.5rem',
     marginTop: '1.5rem',
   },

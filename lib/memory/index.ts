@@ -61,6 +61,12 @@ export default class Memory {
     return this.data[address].value
   }
 
+  /**
+   * Tries to allocate a space of size `bytes` to memory, returning a [number, Memory]
+   * pair if a space was found or a [null, Memory] pair otherwise.
+   * @param bytes — the size to allocate
+   * @returns a [pointer, Memory] pair
+   */
   allocate(bytes: number): [number | null, Memory] {
     for (let address = 0; address < this.data.length - bytes; address++) {
       const slice = this.data.slice(address, address + bytes)
@@ -68,18 +74,21 @@ export default class Memory {
         return [
           address,
           new Memory({
-            data: produce(this.data, (data) => {
-              data.forEach((byte, index) => {
-                if (index >= address && index < address + bytes) {
-                  byte.allocated = true
-                }
-              })
-            }),
+            data: this.allocateBytes(address, bytes),
           }),
         ]
       }
     }
     return [null, this]
+  }
+
+  private allocateBytes(start: number, size: number) {
+    return produce(this.data, (data) => {
+      for (let i = 0; i < size; i++) {
+        const byte = data[start + i]
+        byte.allocated = true
+      }
+    })
   }
 }
 

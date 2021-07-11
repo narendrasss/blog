@@ -31,7 +31,7 @@ export default function Rect({
         rx={borderRadius}
         ry={borderRadius}
         strokeWidth={strokeWidth}
-        strokeDasharray={dashed && 4}
+        strokeDasharray={dashed ? 4 : undefined}
         stroke="var(--gray400)"
       />
       {children && (
