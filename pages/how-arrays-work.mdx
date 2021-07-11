@@ -13,7 +13,6 @@ import Callout from '@/elements/Callout'
 import ArrayGrid from '@/components/how-arrays-work/ArrayGrid'
 import ArrayLookup from '@/components/how-arrays-work/ArrayLookup'
 import ArrayGrow from '@/components/how-arrays-work/ArrayGrow'
-import ArrayMultiType from '@/components/how-arrays-work/ArrayMultiType'
 import MemoryReadWrite from '@/components/how-arrays-work/MemoryReadWrite'
 import Allocate from '@/components/how-arrays-work/Allocate'
 
@@ -33,9 +32,11 @@ In JavaScript (and other dynamic-type languages), arrays can grow in size:
 
 And can even contain multiple types of values:
 
-<Placeholder name="array with multiple types" />
+<ArrayGrid arr={[8, false, 'hello', 9]} />
 
-But how does this all work? What's going on "under the hood" when you lookup an item in an array? How is it so fast anyway? In this post, we're going to dive into the inner workings of an array by building one our own using a few memory primitives.
+But how does this all work? What's going on "under the hood" when you lookup an item in an array? What makes that operation so fast?
+
+In this post, we're going to dive into the inner workings of an array by building one ourselves, with the help of a few memory primitives.
 
 ## Memory API
 

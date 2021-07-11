@@ -25,6 +25,14 @@ const ArrayElement = styled(motion.li, {
         background: 'var(--color-light)',
         color: 'var(--color-dark)',
       },
+      boolean: {
+        background: 'var(--color-highlight-1)',
+        fontSize: '1rem',
+      },
+      string: {
+        background: 'var(--color-highlight-2)',
+        fontSize: '1rem',
+      },
     },
     shadow: {
       true: {
